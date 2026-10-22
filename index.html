@@ -180,10 +180,12 @@ body.home header{margin-bottom:calc(-1 * var(--hh,84px));background:rgba(255,255
 @media(max-width:760px){.hero{height:480px;background-size:cover;background-position:76% center;align-items:flex-start;padding:calc(var(--hh,110px) + 18px) 20px 0}.hero div{width:70%}}
 
 /* --- banner fix: header no longer covers the hero, whole banner visible --- */
-body.home header{margin-bottom:0;background:rgba(255,255,255,.92)}
-.hero{margin:0;border-radius:0;width:100%;height:clamp(440px,42vw,640px);min-height:0;padding:0 0 0 max(20px,calc((100% - 1200px)/2 + 20px));background-size:auto 100%;background-position:right center;align-items:center}
+header{background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;border-bottom-color:transparent;transition:background .25s,box-shadow .25s}
+body.home header{margin-bottom:calc(-1 * var(--hh,84px));background:transparent}
+header.scrolled,body.home header.scrolled{background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);box-shadow:0 4px 24px rgba(60,35,15,.08)}
+.hero{margin:0;border-radius:0;width:100%;height:calc(clamp(440px,42vw,640px) + var(--hh,84px));min-height:0;padding:var(--hh,84px) 0 0 max(20px,calc((100% - 1200px)/2 + 20px));background-size:auto calc(100% - var(--hh,84px));background-position:right bottom;align-items:center}
 .hero div{width:min(42%,520px)}
-@media(max-width:760px){.hero{height:540px;background-size:auto 64%;background-position:right bottom;align-items:flex-start;padding:30px 20px 0}.hero div{width:100%}}
+@media(max-width:760px){.hero{height:calc(540px + var(--hh,110px));background-size:auto 60%;background-position:right bottom;align-items:flex-start;padding:calc(var(--hh,110px) + 18px) 20px 0}.hero div{width:100%}}
 /* --- catalog additions --- */
 .note{background:var(--sand);border:1px dashed var(--camel);border-radius:var(--r);padding:8px 12px;font-size:12.5px;color:var(--muted);margin:0 0 16px}
 .stag{display:inline-block;vertical-align:middle;background:var(--sand);border:1px solid var(--line);border-radius:var(--r);font:700 10px Lato,sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--camel);padding:2px 7px;margin-left:6px}
@@ -356,6 +358,7 @@ function aboutPg(){return '<div class="crumb"><a href="#home">Home</a> / About U
 function contactPg(){return '<div class="crumb"><a href="#home">Home</a> / Contact</div><h1 class="big">Contact Us</h1><p class="sub">Questions about sizing, an order or styling? We’d love to help.</p><div class="two" style="margin-top:22px;align-items:start"><div class="panel"><h3>Visit or write to us</h3><div class="ci"><b>Email</b>hello@mivika.example</div><div class="ci"><b>Phone / WhatsApp</b>+91 00000 00000</div><div class="ci"><b>Studio</b>Your address line, City, State, PIN</div><div class="ci"><b>Hours</b>Mon–Sat, 10:00 – 19:00 IST</div><details open><summary>How long does delivery take?</summary><p>Most orders ship in 2–4 days and arrive within 4–7 days.</p></details><details><summary>Can I exchange my size?</summary><p>Yes — easy size exchanges within 30 days of delivery.</p></details></div><div class="panel"><h3>Send a message</h3><div class="f"><label>Name</label><input id="cn" placeholder="Your name"></div><div class="f"><label>Email</label><input id="ce" placeholder="you@example.com"></div><div class="f"><label>Phone (optional)</label><input id="cp" placeholder="+91"></div><div class="f"><label>Message</label><textarea id="cm" placeholder="How can we help?"></textarea></div><button class="btn" onclick="sendMsg()">Send message</button></div></div>'}
 function sendMsg(){var n=document.getElementById('cn').value.trim(),e=document.getElementById('ce').value.trim(),m=document.getElementById('cm').value.trim();if(!n||!/^\S+@\S+\.\S+$/.test(e)||!m){toast('Please add your name, a valid email and a message');return}toast('Thanks '+n.split(' ')[0]+'! We’ll reply soon (demo only)');['cn','ce','cp','cm'].forEach(function(i){document.getElementById(i).value=''})}
 window.addEventListener('resize',function(){railLayout();setHH()});window.addEventListener('load',setHH);
+window.addEventListener('scroll',function(){var h=document.querySelector('header');if(h)h.classList.toggle('scrolled',(window.scrollY||0)>10)},{passive:true});
 save();render();
 </script>
 </body>
