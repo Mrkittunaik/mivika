@@ -174,6 +174,10 @@ select,.sum input{padding:7px 8px;border:1px solid var(--line);border-radius:var
 .ci{margin:12px 0;font-size:14px}.ci b{display:block;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--camel)}
 .f{margin-bottom:12px}.f label{display:block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}.f input,.f textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;font:inherit}.f textarea{min-height:120px;resize:vertical}
 @media(max-width:760px){.two{grid-template-columns:1fr;gap:24px}}
+body.home header{margin-bottom:calc(-1 * var(--hh,84px));background:rgba(255,255,255,.42)}
+.hero{margin:0;border-radius:0;width:100%;height:clamp(500px,44vw,700px);min-height:0;padding:var(--hh,84px) 0 0 max(20px,calc((100% - 1200px)/2 + 20px));align-items:center}
+.hero div{width:min(40%,520px)}
+@media(max-width:760px){.hero{height:480px;background-size:cover;background-position:76% center;align-items:flex-start;padding:calc(var(--hh,110px) + 18px) 20px 0}.hero div{width:70%}}
 </style>
 </head>
 <body>
@@ -188,6 +192,7 @@ select,.sum input{padding:7px 8px;border:1px solid var(--line);border-radius:var
 </div>
 </div>
 <div class="sbar" id="sbar"><div class="wrap"><input id="sq" placeholder="Search dresses, gowns, sets…" onkeydown="if(event.key=='Enter')doSearch()"><button class="btn" onclick="doSearch()">Search</button></div></div></header>
+<div id="herowrap"></div>
 <main class="wrap" id="app"></main>
 <footer id="footer"><div class="wrap">
 <div class="fgrid">
@@ -237,7 +242,7 @@ function rev(id){return 40+id*13}
 function stars(id){var r=Math.round(+rate(id));return '★★★★★'.slice(0,r)+'☆☆☆☆☆'.slice(0,5-r)}
 var wish={},sq='';
 function setNav(k){document.querySelectorAll('nav a').forEach(function(a){a.classList.toggle('on',a.dataset.k==k)})}
-function toggleSearch(){var b=document.getElementById('sbar');b.classList.toggle('show');if(b.classList.contains('show'))document.getElementById('sq').focus()}
+function toggleSearch(){var b=document.getElementById('sbar');b.classList.toggle('show');if(b.classList.contains('show'))document.getElementById('sq').focus();setHH()}
 function doSearch(){sq=document.getElementById('sq').value.trim().toLowerCase();document.getElementById('sbar').classList.remove('show');shopPage('All',1)}
 function heart(b,id,e){e.stopPropagation();wish[id]=!wish[id];b.textContent=wish[id]?'♥':'♡';b.classList.toggle('on',!!wish[id]);toast(wish[id]?'Saved to wishlist':'Removed from wishlist')}
 function card(id){var p=P[id];return '<div class="card" onclick="location.hash=\'p'+id+'\'"><div class="img">'+pic(id)+(oldP(id)?'<span class="tag">Sale</span>':'')+'<button class="heart'+(wish[id]?' on':'')+'" onclick="heart(this,'+id+',event)">'+(wish[id]?'♥':'♡')+'</button><button class="qvb" onclick="event.stopPropagation();qv('+id+')">Quick view</button></div><div class="info"><div class="ctag">'+p[2]+'</div><div class="name">'+p[0]+'</div><div class="rate">'+stars(id)+' <span>'+rate(id)+' ('+rev(id)+')</span></div><div class="dots">'+COLS.map(function(c,i){return colOK(id,i)?'<i style="background-image:url(\''+IM[id+1]+'\');filter:'+c.f+'"></i>':''}).join('')+'</div><div class="price">'+priceH(id)+'</div><div class="acts"><button class="btn" onclick="event.stopPropagation();add('+id+',\'M\',0,1)">Add to cart</button><button class="btn ghost" onclick="event.stopPropagation();location.hash=\'p'+id+'\'">View</button></div></div></div>'}
@@ -253,10 +258,11 @@ function shopH(){var ids=listIds(0),show=ids.slice(0,10);
 return '<div class="head"><div><h2>Shop All</h2><span class="sub">Showing '+show.length+' of '+ids.length+' pieces'+(sq?' for “'+sq+'”':'')+'</span></div><div class="chips">'+chipsH('goCat',',1')+'</div></div>'+(ids.length?'<div class="grid">'+show.map(card).join('')+'</div>':'<p class="sub">No pieces match your search. Try “dress”, “gown” or “set”.</p>')+'<div style="text-align:center;margin-top:26px"><button class="btn ghost" onclick="shopPage(filter,1)">'+(ids.length>10?'View more ('+(ids.length-10)+' more)':'Open the full shop')+' →</button></div>'}
 function goCat(c,stay,keep){filter=c;if(!keep)sq='';if((location.hash||'#home')!='#home'){location.hash='home';setTimeout(function(){sc('shop')},60)}else{var e=document.getElementById('shop');e.innerHTML=shopH();if(!stay)sc('shop')}}
 function sc(id){var e=document.getElementById(id);if(e)e.scrollIntoView({behavior:'smooth'})}
+function heroH(){return '<div class="hero" style="background-image:url(\''+IM[0]+'\')"><div><h1>Wear Your Confidence</h1><p>Timeless pieces for every season and every occasion.</p><a class="btn" data-s="shop">Shop Now</a></div></div>'}
+function setHH(){var h=document.querySelector('header');if(h)document.documentElement.style.setProperty('--hh',h.offsetHeight+'px')}
 function home(){
 var cats=[['Dresses',10],['Gowns',8],['Ethnic',2],['Sets',15]];
-return '<div class="hero" style="background-image:url(\''+IM[0]+'\')"><div><h1>Wear Your Confidence</h1><p>Timeless pieces for every season and every occasion.</p><a class="btn" data-s="shop">Shop Now</a></div></div>'+
-'<section id="latest"><div class="head"><h2>Latest Products</h2><span class="sub">New this week</span></div><div class="grid">'+[0,1,2,3].map(card).join('')+moreCard()+'</div></section>'+
+return '<section id="latest"><div class="head"><h2>Latest Products</h2><span class="sub">New this week</span></div><div class="grid">'+[0,1,2,3].map(card).join('')+moreCard()+'</div></section>'+
 '<div class="perks"><div><b>Free Shipping</b>Orders over ₹2,999</div><div><b>30-Day Returns</b>No questions asked</div><div><b>Secure Payment</b>Encrypted checkout</div><div><b>Easy Exchange</b>Size guarantee</div></div>'+
 railH()+'<section id="cats"><div class="head"><h2>Categories</h2></div><div class="cats">'+cats.map(function(c){return '<div class="cat" style="background-image:url(\''+IM[c[1]+1]+'\')" onclick="goCat(\''+c[0]+'\')">'+c[0]+'</div>'}).join('')+'</div></section>'+
 '<section id="offer"><div class="offer"><div><h2>Exclusive Offers for a Limited Time</h2><p class="sub">Take 20% off your order with code <b>PREP20</b> at checkout.</p><a class="btn" data-s="shop">Shop the Collection</a></div><div class="pic" style="background-image:url(\''+IM[15]+'\')"></div></div></section>'+
@@ -292,7 +298,7 @@ var dup=cart.findIndex(function(o,n){return n!=k&&o.id==i.id&&o.size==i.size&&o.
 if(dup>-1){cart[dup].q=Math.min(st,cart[dup].q+i.q);cart.splice(k,1)}save();render();toast('Cart updated')}
 function render(){
 var h=(location.hash||'#home').slice(1),a=document.getElementById('app'),m=/^p(\d+)$/.exec(h);
-a.innerHTML=m&&P[+m[1]]?pdp(+m[1]):h=='cart'?cartPg():h=='shop'?shopPg():h=='about'?aboutPg():h=='contact'?contactPg():home();if(!m&&['cart','shop','about','contact'].indexOf(h)<0)railLayout();setNav(h=='shop'||h=='about'||h=='contact'?h:(m||h=='cart')?'':'home')}
+a.innerHTML=m&&P[+m[1]]?pdp(+m[1]):h=='cart'?cartPg():h=='shop'?shopPg():h=='about'?aboutPg():h=='contact'?contactPg():home();var isH=!m&&['cart','shop','about','contact'].indexOf(h)<0;document.getElementById('herowrap').innerHTML=isH?heroH():'';document.body.classList.toggle('home',isH);setHH();if(isH)railLayout();setNav(h=='shop'||h=='about'||h=='contact'?h:(m||h=='cart')?'':'home')}
 window.addEventListener('hashchange',function(){state={size:'M',col:0,qty:1,view:0};render();scrollTo(0,0)});
 document.addEventListener('click',function(e){var s=e.target.closest('[data-s]');if(!s)return;if(s.dataset.k)setNav(s.dataset.k);if((location.hash||'#home')!='#home'){location.hash='home';setTimeout(function(){sc(s.dataset.s)},60)}else sc(s.dataset.s)});
 
@@ -334,7 +340,7 @@ function aboutPg(){return '<div class="crumb"><a href="#home">Home</a> / About U
 '<div class="band"><h2>Find the piece that feels like you</h2><p style="margin:0;opacity:.9">Free shipping over ₹2,999 · 30-day returns · Secure payments</p><a class="btn" onclick="shopPage(\'All\')">Start shopping</a></div>'}
 function contactPg(){return '<div class="crumb"><a href="#home">Home</a> / Contact</div><h1 class="big">Contact Us</h1><p class="sub">Questions about sizing, an order or styling? We’d love to help.</p><div class="two" style="margin-top:22px;align-items:start"><div class="panel"><h3>Visit or write to us</h3><div class="ci"><b>Email</b>hello@mivika.example</div><div class="ci"><b>Phone / WhatsApp</b>+91 00000 00000</div><div class="ci"><b>Studio</b>Your address line, City, State, PIN</div><div class="ci"><b>Hours</b>Mon–Sat, 10:00 – 19:00 IST</div><details open><summary>How long does delivery take?</summary><p>Most orders ship in 2–4 days and arrive within 4–7 days.</p></details><details><summary>Can I exchange my size?</summary><p>Yes — easy size exchanges within 30 days of delivery.</p></details></div><div class="panel"><h3>Send a message</h3><div class="f"><label>Name</label><input id="cn" placeholder="Your name"></div><div class="f"><label>Email</label><input id="ce" placeholder="you@example.com"></div><div class="f"><label>Phone (optional)</label><input id="cp" placeholder="+91"></div><div class="f"><label>Message</label><textarea id="cm" placeholder="How can we help?"></textarea></div><button class="btn" onclick="sendMsg()">Send message</button></div></div>'}
 function sendMsg(){var n=document.getElementById('cn').value.trim(),e=document.getElementById('ce').value.trim(),m=document.getElementById('cm').value.trim();if(!n||!/^\S+@\S+\.\S+$/.test(e)||!m){toast('Please add your name, a valid email and a message');return}toast('Thanks '+n.split(' ')[0]+'! We’ll reply soon (demo only)');['cn','ce','cp','cm'].forEach(function(i){document.getElementById(i).value=''})}
-window.addEventListener('resize',railLayout);
+window.addEventListener('resize',function(){railLayout();setHH()});window.addEventListener('load',setHH);
 save();render();
 </script>
 </body>
